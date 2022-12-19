@@ -18,14 +18,14 @@
         /// </summary>
         public string? Address2 { get; set; }
 
-        /// <summary>
-        /// This refers to type of address1 is it living or educational
-        /// </summary>
-        public AdddressType Adddress1Type { get; set; }
-        /// <summary>
-        /// This refers to type of address2  is it living or educational
-        /// </summary>
-        public AdddressType? Adddress2Type { get; set; }
+        ///// <summary>
+        ///// This refers to type of address1 is it living or educational
+        ///// </summary>
+        //public AdddressType Adddress1Type { get; set; }
+        ///// <summary>
+        ///// This refers to type of address2  is it living or educational
+        ///// </summary>
+        //public AdddressType? Adddress2Type { get; set; }
 
         /// <summary>
         /// This refers to the particular student id number (from Student table) who has these addresses 
@@ -49,17 +49,17 @@
 }
 
 
-/// <summary>
-/// This is enum for using particular options as the tyoe of the addresses. 
-/// </summary>
-public enum AdddressType
-{
-    /// <summary>
-    /// First option living address
-    /// </summary>
-    Living,
-    /// <summary>
-    /// Second option educational address
-    /// </summary>
-    Educational
-}
+///// <summary>
+///// This is enum for using particular options as the tyoe of the addresses. 
+///// </summary>
+//public enum AdddressType
+//{
+//    /// <summary>
+//    /// First option living address
+//    /// </summary>
+//    Living,
+//    /// <summary>
+//    /// Second option educational address
+//    /// </summary>
+//    Educational
+//}

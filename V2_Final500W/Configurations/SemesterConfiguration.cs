@@ -26,17 +26,17 @@ namespace V2_Final500W.Configurations
                 .HasDefaultValue(0)
                   .IsRequired();
 
-            
+
             builder.Property(x => x.StartDate)
                   .HasColumnType("datetime2")
-                   .HasPrecision(0) /// i.mn not sure if it needs
-                   .IsRequired();
+                   .HasPrecision(0); /// i.mn not sure if it needs
+
             //////////////////////// .HasDefaultValueSql("GETDATE()");//DateTime.Now
 
             builder.Property(x => x.EndDate)
                  .HasColumnType("datetime2")
-                  .HasPrecision(0)
-                  .IsRequired();
+                  .HasPrecision(0);
+                  
 
             builder.HasMany(x => x.Schedules)
                 .WithOne(x => x.Semester)

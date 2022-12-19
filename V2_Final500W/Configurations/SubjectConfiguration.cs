@@ -54,6 +54,10 @@ namespace V2_Final500W.Configurations
                 .HasForeignKey(x => x.SubjectId)
                 .HasConstraintName("FK_ScheduleSubject_Subject");
 
+            builder.HasMany(x => x.StudentSubject)
+            .WithOne(x => x.Subject)
+            .HasForeignKey(x => x.SubjectId)
+            .HasConstraintName("FK_StudentSubject_Subject");
 
 
 

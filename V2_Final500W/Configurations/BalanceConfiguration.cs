@@ -21,7 +21,7 @@ namespace V2_Final500W.Configurations
             builder.Property(x => x.SemesterId);//.IsRequired();
             builder.Property(x => x.StudentId); //.IsRequired();
 
-            builder.Property(x => x.Debth).HasColumnType("decimal(18,2)").HasDefaultValue(0);
+            builder.Property(x => x.Debth).HasColumnType("decimal(18,2)");
 
 
         }

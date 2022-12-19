@@ -37,7 +37,7 @@
         /// <summary>
         /// This value is about how much debth is on particular students account in one particular semester
         /// </summary>
-        public decimal Debth { get; set; }
+        public decimal? Debth { get; set; }
 
     }
 }

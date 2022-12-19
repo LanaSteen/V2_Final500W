@@ -27,13 +27,14 @@ namespace V2_Final500W.Configurations
                   .IsRequired();
 
             builder.Property(x => x.IsFree)
-                .HasDefaultValue(false);
+                .HasDefaultValue(true)
+                .IsRequired();
 
 
             builder.HasMany(x => x.ScheduleRooms)
                 .WithOne(x => x.Room)
                 .HasForeignKey(x => x.RoomId)
-                .HasConstraintName("FK_ScheduleRooms_Room");
+                .HasConstraintName("FK_Room_ScheduleRooms");
 
         }
     }

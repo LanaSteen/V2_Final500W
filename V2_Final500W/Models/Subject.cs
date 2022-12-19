@@ -4,7 +4,7 @@
     /// This is the model of Subject
     /// </summary>
     public class Subject
-        {
+    {
         /// <summary>
         /// This is unique/serial Id number of Subject (Also PK for it's table)
         /// </summary>
@@ -38,6 +38,10 @@
         /// List of Schedules with this Subject 
         /// </summary>
         public IEnumerable<ScheduleSubject>? ScheduleSubject { get; set; }
+        /// <summary>
+        /// This is the list of subjects which student is studing
+        /// </summary>
+        public IEnumerable<StudentSubject>? StudentSubject { get; set; }
 
     }
-    }
+}

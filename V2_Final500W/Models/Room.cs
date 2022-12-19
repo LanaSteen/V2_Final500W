@@ -15,7 +15,7 @@
         public string Description { get; set; }
 
         /// <summary>
-        /// This is about either room is free=true or it is not free = false
+        /// This is about either room is free=true=1 or it is not free = false=0
         /// </summary>
         public bool? IsFree { get; set; }
 

@@ -32,9 +32,19 @@ namespace V2_Final500W.Configurations
 
             builder.Property(x => x.DepartmentId);//.IsRequired();
 
-            builder.Property(x => x.AddressId);//.IsRequired();
 
-            builder.Property(x => x.SubjectId);//.IsRequired();
+            //   builder.Property(x => x.AddressId);//.IsRequired();
+
+            builder.HasOne(b => b.Address) 
+              .WithOne(b => b.Teacher)
+              .HasForeignKey<Teacher>(b => b.AddressId);
+
+          //  builder.Property(x => x.SubjectId);//.IsRequired();
+
+            builder.HasOne(x => x.Subject)
+         .WithMany(x => x.Teachers)
+         .HasForeignKey(x => x.SubjectId)
+         .HasConstraintName("FK_Teachers_Subject");
         }
     }
 }

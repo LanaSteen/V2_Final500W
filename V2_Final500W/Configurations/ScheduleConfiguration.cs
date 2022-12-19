@@ -19,15 +19,17 @@ namespace V2_Final500W.Configurations
             builder.ToTable("Schedule", "schedule");
             // builder.HasKey(x => x.Id);
             builder.Property(x => x.StartTime)
-                  .HasColumnType("datetime2")
-                   .HasPrecision(0) /// i.mn not sure if it needs
+                  .HasColumnType("time(7)")
+                   //"time(7)"
+                   //  .HasPrecision(0) /// i.mn not sure if it needs
                    .IsRequired();
             //////////////////////// .HasDefaultValueSql("GETDATE()");//DateTime.Now
 
             builder.Property(x => x.EndTime)
-                 .HasColumnType("datetime2")
-                  .HasPrecision(0)
+                 .HasColumnType("time(7)")
+                  //  .HasPrecision(0)
                   .IsRequired();
+                
 
             //////////////////////////////////////////////////////////////????????????????????????????????
 

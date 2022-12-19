@@ -22,12 +22,12 @@
         /// <summary>
         /// This is starting date and time for Semester and   in the database will be datetime2(0)
         /// </summary>
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         /// <summary>
         /// This is ending date and time for Semester and   in the database will be datetime2(0)
         /// </summary>
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         /// <summary>
         /// //// this is list of the Departments in this particular Semesterr

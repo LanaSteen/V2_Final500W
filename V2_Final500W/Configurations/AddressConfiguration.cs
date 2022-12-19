@@ -20,27 +20,34 @@ namespace V2_Final500W.Configurations
             builder.Property(x => x.Address1).HasMaxLength(200).IsRequired();//.IsRequired();
             builder.Property(x => x.Address2).HasMaxLength(200);
 
-            builder.Property(x => x.StudentId);
-            builder.Property(x => x.TeacherId);
-
-            builder.Property(x => x.Adddress1Type).IsRequired().HasDefaultValue("Living");
-
-            builder.Property(x => x.Adddress2Type);
-
-    
+       
+            builder.HasOne(b => b.Student)
+                .WithOne(b => b.Address)
+                .HasForeignKey<Address>(b => b.StudentId);
 
 
-        // builder.HasMany(x => x.Students)
-        //.WithOne(x => x.Address)
-        //.HasForeignKey(x => x.AddressId)
-        //.HasConstraintName("FK_Students_Address");
+            builder.HasOne(b => b.Teacher)
+              .WithOne(b => b.Address)
+              .HasForeignKey<Address>(b => b.StudentId);
+
+            //builder.Property(x => x.Adddress1Type).IsRequired().HasDefaultValue("Living");
+
+            //builder.Property(x => x.Adddress2Type);
 
 
 
-        // builder.HasMany(x => x.Teachers)
-        //.WithOne(x => x.Address)
-        //.HasForeignKey(x => x.AddressId)
-        //.HasConstraintName("FK_Teachers_Address");
+
+            // builder.HasMany(x => x.Students)
+            //.WithOne(x => x.Address)
+            //.HasForeignKey(x => x.AddressId)
+            //.HasConstraintName("FK_Students_Address");
+
+
+
+            // builder.HasMany(x => x.Teachers)
+            //.WithOne(x => x.Address)
+            //.HasForeignKey(x => x.AddressId)
+            //.HasConstraintName("FK_Teachers_Address");
         }
     }
 }

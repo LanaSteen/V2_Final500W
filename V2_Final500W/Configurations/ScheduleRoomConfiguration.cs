@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using V2_Final500W.Models;
 
 namespace V2_Final500W.Configurations
 {
-
     /// <summary>
     /// This class is for the ScheduleRoom Class configuration
     /// </summary>
+
     public class ScheduleRoomConfiguration : IEntityTypeConfiguration<ScheduleRoom>
     {
         /// <summary>
@@ -17,6 +18,7 @@ namespace V2_Final500W.Configurations
         {
             builder.ToTable("ScheduleRoom", "schedule_room");
 
+       
 
             builder.Property(x => x.ScheduleId);//.IsRequired();
             builder.Property(x => x.RoomId);//.IsRequired();
@@ -25,5 +27,4 @@ namespace V2_Final500W.Configurations
 
         }
     }
-       
 }

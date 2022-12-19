@@ -54,12 +54,22 @@
         /// </summary>
         public string PersonalId { get; set; }
         /// <summary>
-        /// This is the year when student started studing
+        /// This is the year when student started studing. pattern is "2022"
         /// </summary>
+      
+        //public int _startYear;
         public int StartYear { get; set; }
+        //{
+        //    get { return _startYear; }
+        //    set
+        //    {
+        //        int year = DateTime.Parse(value).Year;
+        //        _startYear = $"{year}";
+        //    }
+        //}
         /// <summary>
         /// This is the list of subjects which student is studing
         /// </summary>
-        public IEnumerable<Subject>? Subjects { get; set; }
+        public IEnumerable<StudentSubject>? StudentSubject { get; set; }
     }
 }
