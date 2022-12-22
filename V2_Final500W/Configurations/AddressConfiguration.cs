@@ -30,24 +30,6 @@ namespace V2_Final500W.Configurations
               .WithOne(b => b.Address)
               .HasForeignKey<Address>(b => b.StudentId);
 
-            //builder.Property(x => x.Adddress1Type).IsRequired().HasDefaultValue("Living");
-
-            //builder.Property(x => x.Adddress2Type);
-
-
-
-
-            // builder.HasMany(x => x.Students)
-            //.WithOne(x => x.Address)
-            //.HasForeignKey(x => x.AddressId)
-            //.HasConstraintName("FK_Students_Address");
-
-
-
-            // builder.HasMany(x => x.Teachers)
-            //.WithOne(x => x.Address)
-            //.HasForeignKey(x => x.AddressId)
-            //.HasConstraintName("FK_Teachers_Address");
         }
     }
 }

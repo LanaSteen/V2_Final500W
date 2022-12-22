@@ -47,19 +47,3 @@
 
 
 }
-
-
-///// <summary>
-///// This is enum for using particular options as the tyoe of the addresses. 
-///// </summary>
-//public enum AdddressType
-//{
-//    /// <summary>
-//    /// First option living address
-//    /// </summary>
-//    Living,
-//    /// <summary>
-//    /// Second option educational address
-//    /// </summary>
-//    Educational
-//}

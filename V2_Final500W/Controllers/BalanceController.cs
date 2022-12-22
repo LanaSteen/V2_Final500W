@@ -75,7 +75,7 @@ namespace V2_Final500W.Controllers
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddAddress(BalanceModel balance)
+        public async Task AddBalance(BalanceModel balance)
         {
             await _balanceRepository.AddAsync(new Balance
             {

@@ -24,6 +24,12 @@
         /// </summary>
         public DateTime? StartDate { get; set; }
 
+     
+        public int? Year { get; set; }
+
+
+
+
         /// <summary>
         /// This is ending date and time for Semester and   in the database will be datetime2(0)
         /// </summary>

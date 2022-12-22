@@ -74,7 +74,7 @@ namespace V2_Final500W.Controllers
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddAddress(ScheduleRoomModel scheduleRoom)
+        public async Task AddScheduleRoom(ScheduleRoomModel scheduleRoom)
         {
             await _scheduleRoomRepository.AddAsync(new ScheduleRoom
             {
@@ -90,7 +90,7 @@ namespace V2_Final500W.Controllers
         /// </summary>
         /// <returns>Status ok if it was updated</returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditAddress(int id, ScheduleRoomModel schedR)
+        public async Task<IActionResult> EditScheduleRoom(int id, ScheduleRoomModel schedR)
         {
             var scheeduleRoom = await _context.ScheduleRooms.FindAsync(id);
             if (ScheduleRoomExists(id))
@@ -133,7 +133,7 @@ namespace V2_Final500W.Controllers
 
         // DELETE: api/Addresses1/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAddress(int id)
+        public async Task<IActionResult> DeleteScheduleRoom(int id)
         {
             var scheduleRooms = await _context.ScheduleRooms.FindAsync(id);
             if (scheduleRooms == null)
@@ -152,6 +152,41 @@ namespace V2_Final500W.Controllers
         private bool ScheduleRoomExists(int id)
         {
             return _context.ScheduleRooms.Any(e => e.Id == id);
+        }
+
+
+
+        private int? GetStudentMaxNumberOnSubject(int? id)
+        {
+            var x = _context.Subjects.First(c => c.Id == id);
+            var y = x.MaxNumberOfStudents;
+            return y;
+        }
+
+        private int? CountStudentsWithSameSubject(int? id)
+        {
+            var x = _context.ScheduleRooms.Where(c => c.Id == id);
+            var y = x.Count();
+            return y;
+        }
+        /// <summary>
+        /// //// Dont even ask me
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <returns></returns>
+        [HttpGet("{startDate}")]
+        public int? GetScheduleRoomFree(DateTime startDate)
+        {
+            var x = _context.Rooms.Where(c => c.IsFree == false);
+            var y = x.Select(c => c.ScheduleRooms);
+           var z = new List<Schedule>();
+            foreach (ScheduleRoom i in  y)
+            {
+                z.Add((Schedule)_context.Schedules.Where(k => k.Id == i.ScheduleId)); 
+            }
+
+            var m = z.Where(c => c.Semester.StartDate == startDate).Count();
+            return m;
         }
 
 

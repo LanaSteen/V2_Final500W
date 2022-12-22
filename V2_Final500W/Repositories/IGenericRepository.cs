@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.AspNetCore.Hosting;
+using System.Linq.Expressions;
 
 namespace V2_Final500W.Repositories
 {
@@ -12,5 +13,8 @@ namespace V2_Final500W.Repositories
         Task Update(T obj);
         void Delete(int id);
         Task SaveAsync();
+ 
     }
+
+
 }

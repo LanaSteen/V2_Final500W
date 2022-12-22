@@ -45,7 +45,8 @@ namespace V2_Final500W.Controllers
             var schedules = await _scheduleRepository.GetAllAsync(null, new[] { includes2 });
 
             return schedules.Select(x => new ScheduleModel
-            {
+            {   
+                Year= x.Year,
                 StartTime = x.StartTime,
                 EndTime = x.EndTime,
                 SemesterId= x.SemesterId,
@@ -81,6 +82,7 @@ namespace V2_Final500W.Controllers
         {
             await _scheduleRepository.AddAsync(new Schedule
             {
+                Year= schedule.Year,
                 StartTime = schedule.StartTime,
                 EndTime = schedule.EndTime,
                 SemesterId = schedule.SemesterId,
@@ -99,35 +101,18 @@ namespace V2_Final500W.Controllers
             var shcedule = await _context.Schedules.FindAsync(id);
             if (ScheduleExists(id))
             {
+                if (sched.Year != 0)
+                {
 
-                //if (shcedule.StartTime != ToString("00:00:000")
-                //{
-
-                //if (String.IsNullOrEmpty(sched.StartTime))
-                //{
-                //    return StatusCode(400, $"The Descrioption field is required.");
-                //}
-
+                    shcedule.Year = sched.Year;
+                }
+                else
+                {
+                    shcedule.Year = shcedule.Year;
+                }
                 shcedule.StartTime = sched.StartTime;
-                //}
-                //else
-                //{
-                //    sched.Description = sched.Description;
-                //}
-
-                //if (sched.MaxNumberOfStudents != 0)
-                //{
-                //    if (sched.MaxNumberOfStudents == null)
-                //    {
-                //        return StatusCode(400, $"The  field is required.");
-                //    }
-
-                    shcedule.EndTime = sched.EndTime;
-                //}
-                //else
-                //{
-                //    room.MaxNumberOfStudents = room.MaxNumberOfStudents;
-                //}
+                shcedule.EndTime = sched.EndTime;
+            
                 if (sched.SemesterId != 0)
                 {
 
@@ -179,6 +164,23 @@ namespace V2_Final500W.Controllers
             return _context.Schedules.Any(e => e.Id == id);
         }
 
+
+
+        //[HttpGet("{year}")]
+        //public async Task<ActionResult<ScheduleModel>> GetScheduleByYear(int year)
+        //{
+
+        //    var schedule = await _context.Schedules.FindAsync(year);
+
+        //    if (schedule == null)
+        //    {
+        //        return StatusCode(500, $"There is no schedule on {year} year");
+        //    }
+     
+        //    return Ok(schedule);
+        //}
+
+      
 
     }
 

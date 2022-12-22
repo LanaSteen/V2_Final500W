@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Security.Cryptography.Xml;
 using V2_Final500W.Models;
@@ -49,9 +50,9 @@ namespace V2_Final500W.Controllers
             {
                 Point= x.Point,
                 StudentId = x.StudentId,
-                Student =  x.Student,
+               // Student =  x.Student,
                 SubjectId = x.SubjectId,
-                Subject= x.Subject,
+                //Subject= x.Subject,
 
             });
         }
@@ -77,17 +78,19 @@ namespace V2_Final500W.Controllers
         /// Controller for inserting the one particular StudentSubject 
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
-        [HttpPost]
-        public async Task AddStudentSubject(StudentSubjectModel2 studentSubject)
-        {
-            await _studentSubjectRepository.AddAsync(new StudentSubject
-            {
-                Point= studentSubject.Point,
-                StudentId = studentSubject.StudentId,
-                SubjectId = studentSubject.SubjectId
-            });
-            await _studentSubjectRepository.SaveAsync();
-        }
+        //[HttpPost]
+        //public async Task AddStudentSubject(StudentSubjectModel2 studentSubject)
+        //{
+
+
+        //    await _studentSubjectRepository.AddAsync(new StudentSubject
+        //    {
+        //        Point= studentSubject.Point,
+        //        StudentId = studentSubject.StudentId,
+        //        SubjectId = studentSubject.SubjectId
+        //    });
+        //    await _studentSubjectRepository.SaveAsync();
+        //}
 
         /// <summary>
         /// Controller for editing the one particular StudentSubject choose by id
@@ -151,7 +154,53 @@ namespace V2_Final500W.Controllers
             return NoContent();
         }
 
+        //private int? GetStudentById(int id)
+        //{
+        //    var x = _context.Students.First(c => c.Id == id);
+        //    var y = x.Id;
+        //    return y;
+        //}
 
+        private int? GetStudentMaxNumberOnSubject(int? id)
+        {
+            var x = _context.Subjects.First(c => c.Id == id);
+            var y = x.MaxNumberOfStudents;
+            return y;
+        }
+
+        private int? CountStudentsWithSameSubject(int? id)
+        {
+            var x = _context.StudentSubjects.Where(c => c.SubjectId == id);
+            var y = x.Count() ;
+            return y;
+        }
+        /// <summary>
+        /// Controller for inserting the one particular StudentSubject 
+        /// </summary>
+        /// <returns>Status ok if it was inserted</returns>
+
+        [HttpPost]
+        public async Task<IActionResult>  AddStudentSubjectMax(StudentSubjectModel2 studentSubject)
+        {
+            await _studentSubjectRepository.AddAsync(new StudentSubject
+            {
+                Point = studentSubject.Point,
+                StudentId = studentSubject.StudentId,
+                SubjectId = studentSubject.SubjectId
+            });
+
+
+            int? curentNumberOfStudents =  CountStudentsWithSameSubject(studentSubject?.SubjectId);
+            int? MaxNumberOfStudents = GetStudentMaxNumberOnSubject(studentSubject?.SubjectId);
+            if (curentNumberOfStudents >= MaxNumberOfStudents)
+            {
+                return StatusCode(500, $"Over maximmum number of students");
+            }
+            else { await _studentSubjectRepository.SaveAsync(); }
+            return NoContent();
+        }
+
+    
 
         private bool StudentSubjectExists(int id)
         {
@@ -159,6 +208,6 @@ namespace V2_Final500W.Controllers
         }
 
 
-    }
+}
 
 }

@@ -18,6 +18,11 @@ namespace V2_Final500W.Configurations
         {
             builder.ToTable("Schedule", "schedule");
             // builder.HasKey(x => x.Id);
+            builder.Property(x => x.Year)
+            .HasColumnType("int")
+                  .IsRequired();
+
+
             builder.Property(x => x.StartTime)
                   .HasColumnType("time(7)")
                    //"time(7)"

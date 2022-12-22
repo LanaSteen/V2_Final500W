@@ -84,12 +84,7 @@ namespace V2_Final500W
 
         #endregion
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(connectionString:
-        //     //   @"Server=localhost,44363;Database=ContactList;Integrated Security=true;");
-        //     @"Server=LAPTOP-HE9JLDVE;Database=999;Integrated Security=true;");
-        //}
+
 
 
 
@@ -101,23 +96,6 @@ namespace V2_Final500W
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressConfiguration).Assembly);
         }
-
-
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(connectionString:
-        //     //   @"Server=localhost,44363;Database=ContactList;Integrated Security=true;");
-        //     @"Server=LAPTOP-HE9JLDVE;Database=999;Integrated Security=true;");
-        //}
-
-
-
-    //    /// <summary>
-    //    /// this is creating all models through configurations
-    //    /// </summary>
-    //    /// <param name="modelBuilder"></param>
-    //    public DbSet<V2_Final500W.ViewModels.AddressModel> AddressModel { get; set; }
 
 
     }

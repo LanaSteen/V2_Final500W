@@ -7,7 +7,11 @@ namespace V2_Final500W.ViewModels
     /// </summary>
     public class ScheduleModel
     {
-       // public string _startTime;
+
+        /// <summary>
+        /// this is the year which this schedule is for
+        /// </summary>
+        public int Year { get; set; }
 
         /// <summary>
         /// This is starting date and time for schedule and   in the database will be datetime2(0)
@@ -57,7 +61,11 @@ namespace V2_Final500W.ViewModels
 
     public class ScheduleModel2
     {
-    
+        /// <summary>
+        /// this is the year which this schedule is for
+        /// </summary>
+        public int Year { get; set; }
+
         /// <summary>
         /// This is starting date and time for schedule and   in the database will be datetime2(0)
         /// </summary>

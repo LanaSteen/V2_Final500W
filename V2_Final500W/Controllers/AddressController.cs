@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
+using V2_Final500W.Common;
 using V2_Final500W.Models;
 using V2_Final500W.Repositories;
 using V2_Final500W.ViewModels;
@@ -52,6 +53,8 @@ namespace V2_Final500W.Controllers
             });
         }
 
+
+
         /// <summary>
         /// Controller for getting the particular address through existing id 
         /// </summary>
@@ -63,7 +66,8 @@ namespace V2_Final500W.Controllers
 
             if (address == null)
             {
-                return StatusCode(500, $"Wrong Id number");
+                 return StatusCode(500, $"Wrong Id number");
+
             }
 
             return Ok(address);
@@ -73,8 +77,11 @@ namespace V2_Final500W.Controllers
         /// Controller for inserting the one particular address 
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
+    
+
+
         [HttpPost]
-        public async Task AddAddress(AddressModel address)
+        public async Task<IActionResult> AddAddress(AddressModel address)
         {
             await _addressRepository.AddAsync(new Address
             {
@@ -83,8 +90,26 @@ namespace V2_Final500W.Controllers
                 StudentId = address.StudentId,
                 TeacherId = address.TeacherId
             });
-            await _addressRepository.SaveAsync();
+
+            if (StudentExists(address.StudentId) == false && address.StudentId!=null && address.StudentId != 0)
+            {
+                return StatusCode(500, $"Student by {address.StudentId} Id number does not exists, if it is unknown yet write null or 0");
+            }
+
+            else if (TeacherExists(address.TeacherId) == false && address.TeacherId != null && address.TeacherId !=0)
+            {
+                return StatusCode(500, $"Teacher by {address.TeacherId} Id number does not exists, if it is unknown yet write null or 0");
+            }
+            else
+            {
+                await _addressRepository.SaveAsync();
+            }
+            return NoContent();
+
         }
+
+
+
 
         /// <summary>
         /// Controller for editing the one particular address choose by id
@@ -168,37 +193,24 @@ namespace V2_Final500W.Controllers
             return NoContent();
         }
 
-
-
-     
-        /// ///////////////////////////////////
-
-
-
-        //[HttpPost("error")]
-
-        //public async Task<ActionResult<Responce>> Error(int statusCode)
-        //{
-        //    var responce = await _context.Responces.FindAsync(statusCode);
-
-        //    if (responce == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return responce;
-        //}
-
-
-
-
-
         private bool AddressExists(int id)
         {
             return _context.Addresses.Any(e => e.Id == id);
         }
+        private bool StudentExists(int? id)
+        {
+            return _context.Students.Any(e => e.Id == id);
+        }
+        private bool TeacherExists(int? id)
+        {
+            return _context.Teachers.Any(e => e.Id == id);
+        }
 
-
+        private Responce GetResponce(int? id)
+        {
+           Responce resp = _context.Responces.First(e => e.StatusCode == id);
+            return resp;
+        }
     }
 
 }

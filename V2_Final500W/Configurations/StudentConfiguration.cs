@@ -29,14 +29,9 @@ namespace V2_Final500W.Configurations
               .IsRequired();
 
             builder.Property(x => x.StartYear)
-                   //  .HasColumnType("datetime2")
-                   //  .HasPrecision(0) /// i.mn not sure if it needs   i need just year it will be just int
                    .HasColumnType("int")
-                   //.HasDefaultValue(0)
                    .IsRequired();
                  
-            //////////////////////// .HasDefaultValueSql("GETDATE()");//DateTime.Now
-
 
             builder.Property(x => x.DepartmentId);//.IsRequired();
 

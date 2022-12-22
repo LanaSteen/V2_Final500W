@@ -47,7 +47,7 @@ namespace V2_Final500W.Controllers
             {
                 Name = x.Name,
                 AvaliableGPA = x.AvaliableGPA,
-
+                Year= x.Year,
                 StartDate = x.StartDate,
                 EndDate= x.EndDate,
                 Schedules = x.Schedules,
@@ -83,7 +83,7 @@ namespace V2_Final500W.Controllers
         {
             await _semesterRepository.AddAsync(new Semester
             {
-               
+               Year = semester.Year,
                 Name = semester.Name,
                 AvaliableGPA = semester.AvaliableGPA,
                 StartDate = semester.StartDate,
@@ -130,6 +130,18 @@ namespace V2_Final500W.Controllers
                 else
                 {
                     semester.AvaliableGPA = semester.AvaliableGPA;
+                }
+                if (sem.Year != 0)
+                {
+                    semester.Year = sem.Year;
+                }
+                else if (sem.Year<1900 && sem.Year > 2100)
+                {
+                    return StatusCode(500, $"Wrong year.");
+                }
+                else
+                {
+                    semester.Year = semester.Year;
                 }
 
                 if (sem.EndDate != DateTime.Now)
@@ -203,6 +215,183 @@ namespace V2_Final500W.Controllers
         }
 
 
+
+
+
+        [HttpGet]
+        public async Task<IEnumerable<SemesterModel>> GetYearSemestersWithDepsAndWithSchedules()
+        {
+
+            // Expression<Func<Department, object>> includes = exp => exp.Student;
+            // Expression<Func<Semester, object>> includes2 = exp2 => exp2.ScheduleRooms;
+
+            var semesters = await _semesterRepository.GetAllAsync(null);
+
+            var xx =  semesters.Select(x => new SemesterModel
+            {
+                Name = x.Name,
+                AvaliableGPA = x.AvaliableGPA,
+                Year = x.Year,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                Schedules = x.Schedules,
+                Departments = x.Departments,
+                Students = x.Students,
+
+            });
+
+            return xx;
+        }
+        /// <summary>
+        /// Შექმენით მეთოდი და გამოიტანეთ კონტროლერში (რომელშიც ფიქრობთ რომ ეს მეთოდი უნდა იყსო) 
+        /// 1 წლის ცხრილი დეპარტამენტების მიხედვით.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [HttpGet("{year}")]
+        public async Task<ActionResult<SemesterModel3>> GetSemesterbyYear(int year)
+        {
+            List<Semester> semesterByYear= new List<Semester>();
+            semesterByYear = GetSemesterIdsByYear(year);
+            var semester = new Semester();
+            foreach (var i in semesterByYear)
+            {
+                 semester = await _context.Semesters.FindAsync(i.Id);
+            }
+  
+            var xx = semesterByYear.Select(x => new SemesterModel3
+            {
+           
+                Year = x.Year,
+                Schedules = GetSchedsBySemesterID(x.Id),
+                Departments = GetDepsBySemesterID(x.Id),
+          
+
+            });
+
+            if (xx == null)
+            {
+                return StatusCode(500, $"This Year does not have any information");
+            }
+
+            return Ok(xx);
+        }
+
+        private List<Department> GetDepsBySemesterID(int? id)
+        {
+            var x = _context.Departments.Where(c => c.SemesterId == id).ToList();
+       
+            return x;
+        }
+
+        private List<Schedule> GetSchedsBySemesterID(int? id)
+        {
+            var x = _context.Schedules.Where(c => c.SemesterId == id).ToList();
+
+            return x;
+        }
+
+
+        private List<Semester> GetSemesterIdsByYear(int? year)
+        {
+            var x = _context.Semesters.Where(c => c.Year == year).ToList();
+
+            return x;
+        }
+
+
+
+        private Department GetDepsByStudentID(int studentId)
+        {
+            Department x = _context.Departments.FirstOrDefault(c => c.Students.Any(e => e.Id == studentId));
+            
+            return x;
+        }
+
+        private Student GetStudentBySemesterID(int semesterId)
+        {
+           Student x = _context.Students.FirstOrDefault(c => c.SemesterId == semesterId);
+            return x;
+        }
+
+        private List<int> GetStudentsIdBySemesterID(int semesterId)
+        {
+           var x = _context.Students.Where(c => c.SemesterId == semesterId).ToList();
+            List<int> result = new List<int>();
+            foreach(var i in x)
+            {
+                result.Add(i.Id);
+            }
+            return result;
+        }
+
+        private List<int> GetSubjectsIdByStudentID(int studentId)
+        {
+            var x = _context.StudentSubjects.Where(m => m.StudentId == studentId).ToList();
+            List <int> ints= new List<int>();   
+            foreach(var i in x)
+            {
+                ints.Add(i.Id);
+            }
+
+            return ints;
+           
+        }
+
+        private bool StudentFailed( int subjectId)
+        {
+            Subject x = _context.Subjects.FirstOrDefault(c => c.Id == subjectId);
+            StudentSubject y = _context.StudentSubjects.FirstOrDefault(x=> x.SubjectId == subjectId);
+           if( y.Point < x.LowerBound)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
+
+        /// <summary>
+        /// Შექმენით მეთოდი რომელიც კონკრეტულ სემესტრში გამოიტანს ჩაჭრილი სტუდენტების სიას 
+        /// დეპარტამენტების მიხედვით.(ინფორმაცია უნდა შეიცავდეს სტუდენტის სახელს,გვარს, 
+        /// საგნის დასახელებას და ქულას.)
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SemesterModel4>> GetFailedStudentsBySemesterId(int id)
+        {
+
+           // var semester = await _context.Semesters.FindAsync(id);
+            var studentsIds = GetStudentsIdBySemesterID(id);
+            List<int> subjectIds = new List<int>();
+            List<List<int>> subjectIdsS = new List<List<int>>();
+            foreach(int student in studentsIds)
+            {
+                subjectIds=(GetSubjectsIdByStudentID(student));
+                subjectIdsS.Add(subjectIds);
+            }
+            List<bool> subjects = new List<bool>(); 
+            
+            foreach(var subject in subjectIdsS)
+            {
+                foreach(var sub in subject)
+                {
+                    subjects.Add(StudentFailed(sub));
+                    if (StudentFailed(sub))
+                      {
+                        return StatusCode(100, $"Student faild");
+                    }
+                }
+            }
+
+
+            return Ok(subjects);
+        }
     }
 
 }

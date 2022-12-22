@@ -12,8 +12,8 @@ using V2_Final500W;
 namespace V2_Final500W.Migrations
 {
     [DbContext(typeof(UniversityDbContext))]
-    [Migration("20221214071937_MyMigration14")]
-    partial class MyMigration14
+    [Migration("20221222205203_MyMigration1")]
+    partial class MyMigration1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -197,6 +197,9 @@ namespace V2_Final500W.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time(7)");
 
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SemesterId");
@@ -224,7 +227,7 @@ namespace V2_Final500W.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("ScheduleRoom");
+                    b.ToTable("ScheduleRoom", "schedule_room");
                 });
 
             modelBuilder.Entity("V2_Final500W.Models.ScheduleSubject", b =>
@@ -247,7 +250,7 @@ namespace V2_Final500W.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("ScheduleSubject");
+                    b.ToTable("ScheduleSubject", "schedule_subject");
                 });
 
             modelBuilder.Entity("V2_Final500W.Models.Semester", b =>
@@ -263,7 +266,7 @@ namespace V2_Final500W.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasPrecision(0)
                         .HasColumnType("datetime2(0)");
 
@@ -272,9 +275,12 @@ namespace V2_Final500W.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
                         .HasPrecision(0)
                         .HasColumnType("datetime2(0)");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -386,12 +392,7 @@ namespace V2_Final500W.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
 
                     b.ToTable("Subject", "subject");
                 });
@@ -536,23 +537,18 @@ namespace V2_Final500W.Migrations
             modelBuilder.Entity("V2_Final500W.Models.StudentSubject", b =>
                 {
                     b.HasOne("V2_Final500W.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId");
+                        .WithMany("StudentSubject")
+                        .HasForeignKey("StudentId")
+                        .HasConstraintName("FK_StudentSubject_Student");
 
                     b.HasOne("V2_Final500W.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId");
+                        .WithMany("StudentSubject")
+                        .HasForeignKey("SubjectId")
+                        .HasConstraintName("FK_StudentSubject_Subject");
 
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("V2_Final500W.Models.Subject", b =>
-                {
-                    b.HasOne("V2_Final500W.Models.Student", null)
-                        .WithMany("Subjects")
-                        .HasForeignKey("StudentId");
                 });
 
             modelBuilder.Entity("V2_Final500W.Models.Teacher", b =>
@@ -615,12 +611,14 @@ namespace V2_Final500W.Migrations
 
             modelBuilder.Entity("V2_Final500W.Models.Student", b =>
                 {
-                    b.Navigation("Subjects");
+                    b.Navigation("StudentSubject");
                 });
 
             modelBuilder.Entity("V2_Final500W.Models.Subject", b =>
                 {
                     b.Navigation("ScheduleSubject");
+
+                    b.Navigation("StudentSubject");
 
                     b.Navigation("Teachers");
                 });

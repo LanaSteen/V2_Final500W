@@ -26,6 +26,9 @@ namespace V2_Final500W.Configurations
                 .HasDefaultValue(0)
                   .IsRequired();
 
+            builder.Property(x => x.Year)
+          .HasColumnType("int");
+
 
             builder.Property(x => x.StartDate)
                   .HasColumnType("datetime2")

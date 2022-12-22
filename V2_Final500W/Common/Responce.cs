@@ -7,10 +7,7 @@ namespace V2_Final500W.Common
     /// </summary>
     public class Responce
     {
-        ///// <summary>
-        ///// This is unique/serial Id number of Responce (Also PK for this table)
-        ///// </summary>
-        //public int Id { get; set; }
+
         /// <summary>
         /// this is statuscodes  (Also PK for this table)
         /// </summary>

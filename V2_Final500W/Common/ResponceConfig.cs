@@ -13,11 +13,8 @@ namespace V2_Final500W.Common
         /// </summary>
         public void Configure(EntityTypeBuilder<Responce> builder)
         {
-            /*  builder.HasKey(x => x.Id); */ //when the field name is Id EF knows that it will be PK so this is optional
+           
             builder.HasKey(x => x.StatusCode);
-             
-
-            // as it is string defoult does not need to write tyoe of field
 
             builder.Property(x => x.Message)
                 .IsRequired()

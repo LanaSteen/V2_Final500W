@@ -11,7 +11,10 @@ namespace V2_Final500W.Models
         /// This is unique/serial Id number of Schedule (Also PK for it's table)
         /// </summary>
         public int Id { get; set; }
-
+        /// <summary>
+        /// this is the year which this schedule is for
+        /// </summary>
+        public int Year { get; set; }
         /// <summary>
         /// This is starting date and time for schedule and   in the database will be datetime2(0)
         /// </summary>

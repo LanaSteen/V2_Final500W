@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace V2_Final500W.Migrations
 {
-    public partial class MyMigration14 : Migration
+    public partial class MyMigration1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,6 +23,12 @@ namespace V2_Final500W.Migrations
 
             migrationBuilder.EnsureSchema(
                 name: "schedule");
+
+            migrationBuilder.EnsureSchema(
+                name: "schedule_room");
+
+            migrationBuilder.EnsureSchema(
+                name: "schedule_subject");
 
             migrationBuilder.EnsureSchema(
                 name: "semester");
@@ -94,12 +100,31 @@ namespace V2_Final500W.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     AvaliableGPA = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    StartDate = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false)
+                    StartDate = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true),
+                    Year = table.Column<int>(type: "int", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Semester", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subject",
+                schema: "subject",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Credit = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    LowerBound = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    MaxNumberOfStudents = table.Column<int>(type: "int", nullable: false),
+                    MaxNumberOfTeachers = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subject", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -132,6 +157,7 @@ namespace V2_Final500W.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Year = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<TimeSpan>(type: "time(7)", nullable: false),
                     SemesterId = table.Column<int>(type: "int", nullable: true),
                     EndTime = table.Column<TimeSpan>(type: "time(7)", nullable: false)
@@ -186,7 +212,45 @@ namespace V2_Final500W.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Teacher",
+                schema: "teacher",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: true),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    PersonalId = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teacher", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teacher_Address_AddressId",
+                        column: x => x.AddressId,
+                        principalSchema: "address",
+                        principalTable: "Address",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Teachers_Department",
+                        column: x => x.DepartmentId,
+                        principalSchema: "department",
+                        principalTable: "Department",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Teachers_Subject",
+                        column: x => x.SubjectId,
+                        principalSchema: "subject",
+                        principalTable: "Subject",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ScheduleRoom",
+                schema: "schedule_room",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -205,6 +269,33 @@ namespace V2_Final500W.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ScheduleRooms_Room",
+                        column: x => x.ScheduleId,
+                        principalSchema: "schedule",
+                        principalTable: "Schedule",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScheduleSubject",
+                schema: "schedule_subject",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ScheduleId = table.Column<int>(type: "int", nullable: true),
+                    SubjectId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScheduleSubject", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ScheduleSubject_Subject",
+                        column: x => x.SubjectId,
+                        principalSchema: "subject",
+                        principalTable: "Subject",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ScheduleSubjects_Room",
                         column: x => x.ScheduleId,
                         principalSchema: "schedule",
                         principalTable: "Schedule",
@@ -241,57 +332,6 @@ namespace V2_Final500W.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subject",
-                schema: "subject",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Credit = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    LowerBound = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    MaxNumberOfStudents = table.Column<int>(type: "int", nullable: false),
-                    MaxNumberOfTeachers = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subject", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Subject_Student_StudentId",
-                        column: x => x.StudentId,
-                        principalSchema: "student",
-                        principalTable: "Student",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ScheduleSubject",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ScheduleId = table.Column<int>(type: "int", nullable: true),
-                    SubjectId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ScheduleSubject", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ScheduleSubject_Subject",
-                        column: x => x.SubjectId,
-                        principalSchema: "subject",
-                        principalTable: "Subject",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ScheduleSubjects_Room",
-                        column: x => x.ScheduleId,
-                        principalSchema: "schedule",
-                        principalTable: "Schedule",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "StudentSubject",
                 schema: "student_subject",
                 columns: table => new
@@ -306,50 +346,13 @@ namespace V2_Final500W.Migrations
                 {
                     table.PrimaryKey("PK_StudentSubject", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StudentSubject_Student_StudentId",
+                        name: "FK_StudentSubject_Student",
                         column: x => x.StudentId,
                         principalSchema: "student",
                         principalTable: "Student",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_StudentSubject_Subject_SubjectId",
-                        column: x => x.SubjectId,
-                        principalSchema: "subject",
-                        principalTable: "Subject",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Teacher",
-                schema: "teacher",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: true),
-                    DepartmentId = table.Column<int>(type: "int", nullable: true),
-                    AddressId = table.Column<int>(type: "int", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    PersonalId = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Teacher", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Teacher_Address_AddressId",
-                        column: x => x.AddressId,
-                        principalSchema: "address",
-                        principalTable: "Address",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Teachers_Department",
-                        column: x => x.DepartmentId,
-                        principalSchema: "department",
-                        principalTable: "Department",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Teachers_Subject",
+                        name: "FK_StudentSubject_Subject",
                         column: x => x.SubjectId,
                         principalSchema: "subject",
                         principalTable: "Subject",
@@ -397,21 +400,25 @@ namespace V2_Final500W.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleRoom_RoomId",
+                schema: "schedule_room",
                 table: "ScheduleRoom",
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleRoom_ScheduleId",
+                schema: "schedule_room",
                 table: "ScheduleRoom",
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleSubject_ScheduleId",
+                schema: "schedule_subject",
                 table: "ScheduleSubject",
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleSubject_SubjectId",
+                schema: "schedule_subject",
                 table: "ScheduleSubject",
                 column: "SubjectId");
 
@@ -448,12 +455,6 @@ namespace V2_Final500W.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subject_StudentId",
-                schema: "subject",
-                table: "Subject",
-                column: "StudentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Teacher_AddressId",
                 schema: "teacher",
                 table: "Teacher",
@@ -484,10 +485,12 @@ namespace V2_Final500W.Migrations
                 name: "Responces");
 
             migrationBuilder.DropTable(
-                name: "ScheduleRoom");
+                name: "ScheduleRoom",
+                schema: "schedule_room");
 
             migrationBuilder.DropTable(
-                name: "ScheduleSubject");
+                name: "ScheduleSubject",
+                schema: "schedule_subject");
 
             migrationBuilder.DropTable(
                 name: "StudentSubject",
@@ -506,12 +509,12 @@ namespace V2_Final500W.Migrations
                 schema: "schedule");
 
             migrationBuilder.DropTable(
-                name: "Subject",
-                schema: "subject");
-
-            migrationBuilder.DropTable(
                 name: "Student",
                 schema: "student");
+
+            migrationBuilder.DropTable(
+                name: "Subject",
+                schema: "subject");
 
             migrationBuilder.DropTable(
                 name: "Address",

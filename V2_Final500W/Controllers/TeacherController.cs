@@ -82,12 +82,14 @@ namespace V2_Final500W.Controllers
             return Ok(teacher);
         }
 
+
         /// <summary>
         /// Controller for inserting the one particular Teacher 
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
+
         [HttpPost]
-        public async Task AddTeacher(TeacherModel2 teacher)
+        public async Task<IActionResult> AddTeacherMaxSubj(TeacherModel2 teacher)
         {
             await _teacherRepository.AddAsync(new Teacher
             {
@@ -96,15 +98,46 @@ namespace V2_Final500W.Controllers
                 LastName = teacher.LastName,
                 PersonalId = teacher.PersonalId,
                 SubjectId = teacher.SubjectId,
-            
+
                 DepartmentId = teacher.DepartmentId,
-            
+
                 AddressId = teacher.AddressId,
-            
+
 
             });
-            await _teacherRepository.SaveAsync();
+
+            int? curentNumberOfTeachers = CountTeacherWithSameSubject(teacher?.SubjectId);
+            int? MaxNumberOfTeachers = GetTeacherMaxNumberOnSubject(teacher?.SubjectId);
+            if (curentNumberOfTeachers >= MaxNumberOfTeachers)
+            {
+                return StatusCode(500, $"Over maximmum number of students");
+            }
+            else { await _teacherRepository.SaveAsync(); }
+            return NoContent();
+
+
         }
+
+
+        private int? GetTeacherMaxNumberOnSubject(int? id)
+        {
+            var x = _context.Subjects.First(c => c.Id == id);
+            var y = x.MaxNumberOfTeachers;
+            return y;
+        }
+
+        private int? CountTeacherWithSameSubject(int? id)
+        {
+            var x = _context.Teachers.Where(c => c.SubjectId == id);
+            var y = x.Count();
+            return y;
+        }
+
+
+
+
+
+
 
         /// <summary>
         /// Controller for editing the one particular Teacher choose by id
