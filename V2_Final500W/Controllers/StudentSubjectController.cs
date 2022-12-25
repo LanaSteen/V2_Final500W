@@ -64,7 +64,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentSubjectModel>> GetStudentSubject(int id)
         {
-            var studentSubject = await _context.StudentSubjects.FindAsync(id);
+            var studentSubject = await _studentSubjectRepository.GetByIdAsync(id);
 
             if (studentSubject == null)
             {
@@ -99,7 +99,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditStudentSubject(int id, StudentSubjectModel2 studS)
         {
-            var studentSubject = await _context.StudentSubjects.FindAsync(id);
+            var studentSubject = await _studentSubjectRepository.GetByIdAsync(id);
             if (StudentSubjectExists(id))
             {
                 if (studS.StudentId != 0)
@@ -119,9 +119,8 @@ namespace V2_Final500W.Controllers
                     studentSubject.SubjectId = studentSubject.SubjectId;
                 }
 
-
-                _context.StudentSubjects.Update(studentSubject);
-                await _context.SaveChangesAsync();
+                _studentSubjectRepository.Update(studentSubject);
+                await _studentSubjectRepository.SaveAsync();
 
             }
             else
@@ -142,14 +141,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudentSubject(int id)
         {
-            var studentSubject = await _context.StudentSubjects.FindAsync(id);
+            var studentSubject = await _studentSubjectRepository.GetByIdAsync(id);
             if (studentSubject == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.StudentSubjects.Remove(studentSubject);
-            await _context.SaveChangesAsync();
+            _studentSubjectRepository.Delete2(studentSubject);
+            await _studentSubjectRepository.SaveAsync();
 
             return NoContent();
         }
@@ -204,7 +202,8 @@ namespace V2_Final500W.Controllers
 
         private bool StudentSubjectExists(int id)
         {
-            return _context.StudentSubjects.Any(e => e.Id == id);
+            //return _context.StudentSubjects.Any(e => e.Id == id);
+            return _studentSubjectRepository.GetByIdAsyncBool(id);
         }
 
 

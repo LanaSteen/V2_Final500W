@@ -64,7 +64,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SemesterModel>> GetSemester(int id)
         {
-            var semester = await _context.Semesters.FindAsync(id);
+            var semester = await  _semesterRepository.GetByIdAsync(id);
 
             if (semester == null)
             {
@@ -100,7 +100,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditSemester(int id, SemesterModel2 sem)
         {
-            var semester = await _context.Semesters.FindAsync(id);
+            var semester = await _semesterRepository.GetByIdAsync(id);
             if (SemesterExists(id))
             {
 
@@ -172,10 +172,8 @@ namespace V2_Final500W.Controllers
                     semester.StartDate = semester.StartDate;
                 }
 
-         
-                _context.Semesters.Update(semester);
-                await _context.SaveChangesAsync();
-
+                _semesterRepository.Update( semester );
+                await _semesterRepository.SaveAsync();
             }
             else
             {
@@ -195,14 +193,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSemester(int id)
         {
-            var semester = await _context.Semesters.FindAsync(id);
+            var semester = await _semesterRepository.GetByIdAsync(id);
             if (semester == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Semesters.Remove(semester);
-            await _context.SaveChangesAsync();
+            _semesterRepository.Delete2(semester);
+            await _semesterRepository.SaveAsync();
 
             return NoContent();
         }
@@ -211,7 +208,8 @@ namespace V2_Final500W.Controllers
 
         private bool SemesterExists(int id)
         {
-            return _context.Semesters.Any(e => e.Id == id);
+            // return _context.Semesters.Any(e => e.Id == id);
+            return _semesterRepository.GetByIdAsyncBool(id);
         }
 
 
@@ -256,7 +254,7 @@ namespace V2_Final500W.Controllers
             var semester = new Semester();
             foreach (var i in semesterByYear)
             {
-                 semester = await _context.Semesters.FindAsync(i.Id);
+                 semester = await _semesterRepository.GetByIdAsync(i.Id);
             }
   
             var xx = semesterByYear.Select(x => new SemesterModel3

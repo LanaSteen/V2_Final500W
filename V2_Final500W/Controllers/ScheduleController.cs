@@ -63,7 +63,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ScheduleModel>> GetSchedule(int id)
         {
-            var schedule = await _context.Schedules.FindAsync(id);
+            var schedule = await _scheduleRepository.GetByIdAsync(id);
 
             if (schedule == null)
             {
@@ -98,7 +98,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditSchedule(int id, ScheduleModel2 sched)
         {
-            var shcedule = await _context.Schedules.FindAsync(id);
+            var shcedule = await _scheduleRepository.GetByIdAsync(id);
             if (ScheduleExists(id))
             {
                 if (sched.Year != 0)
@@ -122,9 +122,8 @@ namespace V2_Final500W.Controllers
                 {
                     shcedule.SemesterId = shcedule.SemesterId;
                 }
-
-                _context.Schedules.Update(shcedule);
-                await _context.SaveChangesAsync();
+                _scheduleRepository.Update(shcedule);
+                await _scheduleRepository.SaveAsync();
 
             }
             else
@@ -145,14 +144,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchedule(int id)
         {
-            var schedule = await _context.Schedules.FindAsync(id);
+            var schedule = await _scheduleRepository.GetByIdAsync(id);
             if (schedule == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Schedules.Remove(schedule);
-            await _context.SaveChangesAsync();
+            _scheduleRepository.Delete2(schedule);
+            await _scheduleRepository.SaveAsync();
 
             return NoContent();
         }
@@ -161,7 +159,8 @@ namespace V2_Final500W.Controllers
 
         private bool ScheduleExists(int id)
         {
-            return _context.Schedules.Any(e => e.Id == id);
+            //return _context.Schedules.Any(e => e.Id == id);
+            return _scheduleRepository.GetByIdAsyncBool(id);
         }
 
 

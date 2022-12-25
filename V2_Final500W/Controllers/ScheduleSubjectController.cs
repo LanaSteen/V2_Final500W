@@ -16,18 +16,14 @@ namespace V2_Final500W.Controllers
     public class ScheduleSubjectController : ControllerBase
     {
 
-        private readonly UniversityDbContext _context;
-
         private readonly IGenericRepository<ScheduleSubject> _scheduleSubjectRepository;
         /// <summary>
         /// IGeneric interface implementation
         /// </summary>
-        public ScheduleSubjectController(IGenericRepository<ScheduleSubject> scheduleSubjectRepository,
-            UniversityDbContext context)
+        public ScheduleSubjectController(IGenericRepository<ScheduleSubject> scheduleSubjectRepository)
         {
             _scheduleSubjectRepository = scheduleSubjectRepository;
 
-            _context = context;
 
         }
         /// <summary>
@@ -59,7 +55,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ScheduleSubjectModel>> GetScheduleSubject(int id)
         {
-            var scheduleSubject = await _context.ScheduleSubjects.FindAsync(id);
+            var scheduleSubject = await _scheduleSubjectRepository.GetByIdAsync(id);
 
             if (scheduleSubject == null)
             {
@@ -92,7 +88,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditScheduleSubject(int id, ScheduleSubjectModel schedS)
         {
-            var scheeduleSubject = await _context.ScheduleSubjects.FindAsync(id);
+            var scheeduleSubject = await _scheduleSubjectRepository.GetByIdAsync(id);
             if (ScheduleSubjectExists(id))
             {
                 if (schedS.ScheduleId != 0)
@@ -112,9 +108,8 @@ namespace V2_Final500W.Controllers
                     scheeduleSubject.SubjectId = scheeduleSubject.SubjectId;
                 }
 
-
-                _context.ScheduleSubjects.Update(scheeduleSubject);
-                await _context.SaveChangesAsync();
+                _scheduleSubjectRepository.Update(scheeduleSubject);
+                await _scheduleSubjectRepository.SaveAsync();
 
             }
             else
@@ -135,14 +130,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteScheduleSubject(int id)
         {
-            var scheduleSubjects = await _context.ScheduleSubjects.FindAsync(id);
+            var scheduleSubjects = await _scheduleSubjectRepository.GetByIdAsync(id);
             if (scheduleSubjects == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.ScheduleSubjects.Remove(scheduleSubjects);
-            await _context.SaveChangesAsync();
+            _scheduleSubjectRepository.Delete2(scheduleSubjects);
+            await _scheduleSubjectRepository.SaveAsync();
 
             return NoContent();
         }
@@ -151,7 +145,8 @@ namespace V2_Final500W.Controllers
 
         private bool ScheduleSubjectExists(int id)
         {
-            return _context.ScheduleSubjects.Any(e => e.Id == id);
+            // return _context.ScheduleSubjects.Any(e => e.Id == id);
+            return _scheduleSubjectRepository.GetByIdAsyncBool(id);
         }
 
 

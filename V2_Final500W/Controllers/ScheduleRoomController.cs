@@ -17,15 +17,18 @@ namespace V2_Final500W.Controllers
     {
 
         private readonly UniversityDbContext _context;
-
+        
+        private readonly IGenericRepository<Subject> _subjectRepository;
         private readonly IGenericRepository<ScheduleRoom> _scheduleRoomRepository;
         /// <summary>
         /// IGeneric interface implementation
         /// </summary>
         public ScheduleRoomController(IGenericRepository<ScheduleRoom> scheduleRoomRepository,
+            IGenericRepository<Subject> subjectRepository,
             UniversityDbContext context)
         {
             _scheduleRoomRepository = scheduleRoomRepository;
+            _subjectRepository = subjectRepository;
 
             _context = context;
 
@@ -59,7 +62,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ScheduleRoomModel>> GetScheduleRoom(int id)
         {
-            var scheduleRoom = await _context.ScheduleRooms.FindAsync(id);
+            var scheduleRoom = await _scheduleRoomRepository.GetByIdAsync(id);
 
             if (scheduleRoom == null)
             {
@@ -92,7 +95,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditScheduleRoom(int id, ScheduleRoomModel schedR)
         {
-            var scheeduleRoom = await _context.ScheduleRooms.FindAsync(id);
+            var scheeduleRoom = await _scheduleRoomRepository.GetByIdAsync(id);
             if (ScheduleRoomExists(id))
             {
                 if (schedR.ScheduleId != 0)
@@ -111,10 +114,9 @@ namespace V2_Final500W.Controllers
                 {
                     scheeduleRoom.RoomId = scheeduleRoom.RoomId;
                 }
-               
 
-                _context.ScheduleRooms.Update(scheeduleRoom);
-                await _context.SaveChangesAsync();
+                _scheduleRoomRepository.Update(scheeduleRoom);
+                await _scheduleRoomRepository.SaveAsync();
 
             }
             else
@@ -135,14 +137,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteScheduleRoom(int id)
         {
-            var scheduleRooms = await _context.ScheduleRooms.FindAsync(id);
+            var scheduleRooms = await _scheduleRoomRepository.GetByIdAsync(id);
             if (scheduleRooms == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.ScheduleRooms.Remove(scheduleRooms);
-            await _context.SaveChangesAsync();
+            _scheduleRoomRepository.Delete2(scheduleRooms);
+            await _scheduleRoomRepository.SaveAsync();
 
             return NoContent();
         }
@@ -151,20 +152,23 @@ namespace V2_Final500W.Controllers
 
         private bool ScheduleRoomExists(int id)
         {
-            return _context.ScheduleRooms.Any(e => e.Id == id);
+            //  return _context.ScheduleRooms.Any(e => e.Id == id);
+            return _scheduleRoomRepository.GetByIdAsyncBool(id);
         }
 
 
 
-        private int? GetStudentMaxNumberOnSubject(int? id)
-        {
-            var x = _context.Subjects.First(c => c.Id == id);
-            var y = x.MaxNumberOfStudents;
-            return y;
-        }
+        //private async int GetStudentMaxNumberOnSubject(int? id)
+        //{
+        //    var x = await _subjectRepository.GetByIdAsync2(id); 
+        //    var y =x.MaxNumberOfStudents;
+        //    return y;
+        //}
 
+        //ესაა ის შემთხვევა როდესაც რეპოზიტორი ვერ გამოვიყენე ანუ სადაც WHERE დამჭირდა და სადაც int დაბრუნება დამჭირდა 
         private int? CountStudentsWithSameSubject(int? id)
         {
+           // var x = _scheduleRoomRepository.GetByIdAsync2(id);
             var x = _context.ScheduleRooms.Where(c => c.Id == id);
             var y = x.Count();
             return y;

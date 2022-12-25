@@ -33,6 +33,11 @@ namespace V2_Final500W.Repositories
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }
+        public async Task<T> GetByIdAsync2(int? id)
+        {
+            return await _dbContext.Set<T>().FindAsync(id);
+          
+        }
 
         public async Task AddAsync(T obj)
         {
@@ -60,6 +65,24 @@ namespace V2_Final500W.Repositories
                 _dbContext.Entry(entity).State = EntityState.Modified;
             }
         }
+        public bool GetByIdAsyncBool(int? id)
+        {
+            var entity = _dbContext.Set<T>().Find(id);
+            if (entity != null)
+            {
+                return true;
+            }
+            return false;
+            
+        }
+
+        public async Task Delete2(T obj)
+        {
+            _dbContext.Set<T>().Remove(obj);
+            _dbContext.Entry(obj).State = EntityState.Modified;
+        }
+
+
 
         public async Task SaveAsync()
         {

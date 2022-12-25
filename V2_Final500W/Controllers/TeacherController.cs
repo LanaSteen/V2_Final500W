@@ -72,7 +72,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TeacherModel>> GetTeacher(int id)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
+            var teacher = await _teacherRepository.GetByIdAsync(id);
 
             if (teacher == null)
             {
@@ -146,7 +146,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditTeacher(int id, TeacherModel2 teach)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
+            var teacher = await _teacherRepository.GetByIdAsync(id);
             if (TeacherExists(id))
             {
                 if (teach.FirstName != "string")
@@ -216,9 +216,8 @@ namespace V2_Final500W.Controllers
                     teacher.AddressId = teacher.AddressId;
                 }
 
-
-                _context.Teachers.Update(teacher);
-                await _context.SaveChangesAsync();
+                _teacherRepository.Update(teacher);
+                await _teacherRepository.SaveAsync();
 
             }
             else
@@ -239,14 +238,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTeacher(int id)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
+            var teacher = await _teacherRepository.GetByIdAsync(id);
             if (teacher == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Teachers.Remove(teacher);
-            await _context.SaveChangesAsync();
+            _teacherRepository.Delete2(teacher);
+            await _teacherRepository.SaveAsync();
 
             return NoContent();
         }
@@ -255,7 +253,8 @@ namespace V2_Final500W.Controllers
 
         private bool TeacherExists(int id)
         {
-            return _context.Teachers.Any(e => e.Id == id);
+            //return _context.Teachers.Any(e => e.Id == id);
+            return _teacherRepository.GetByIdAsyncBool(id);
         }
 
 

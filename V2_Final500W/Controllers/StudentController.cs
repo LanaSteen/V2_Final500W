@@ -66,7 +66,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentModel>> GetStudent(int id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await _studentRepository.GetByIdAsync(id);
 
             if (student == null)
             {
@@ -107,7 +107,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditStudent(int id, StudentModel2 stud)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await _studentRepository.GetByIdAsync(id);
             if (StudentExists(id))
             {
                 if (stud.FirstName != "string")
@@ -190,9 +190,8 @@ namespace V2_Final500W.Controllers
                     student.DepartmentId = student.DepartmentId;
                 }
 
-
-                _context.Students.Update(student);
-                await _context.SaveChangesAsync();
+                _studentRepository.Update(student);
+                await _studentRepository.SaveAsync();
 
             }
             else
@@ -213,14 +212,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(int id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await _studentRepository.GetByIdAsync(id);
             if (student == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
+            _studentRepository.Delete2(student);
+            await _studentRepository.SaveAsync();
 
             return NoContent();
         }
@@ -229,7 +227,8 @@ namespace V2_Final500W.Controllers
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.Id == id);
+            // return _context.Students.Any(e => e.Id == id);
+            return _studentRepository.GetByIdAsyncBool(id);
         }
 
 

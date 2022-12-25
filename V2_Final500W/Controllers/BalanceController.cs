@@ -60,7 +60,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BalanceModel>> GetBalance(int id)
         {
-            var balance = await _context.Balances.FindAsync(id);
+            var balance = await _balanceRepository.GetByIdAsync(id);
 
             if (balance == null)
             {
@@ -94,7 +94,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditBalance(int id, BalanceModel bal)
         {
-            var balance = await _context.Balances.FindAsync(id);
+            var balance = await _balanceRepository.GetByIdAsync(id);
             if (BalanceExists(id))
             {
                 if (bal.SemesterId != 0)
@@ -142,9 +142,9 @@ namespace V2_Final500W.Controllers
                 {
                     balance.Debth = balance.Debth;
                 }
-                _context.Balances.Update(balance);
-                await _context.SaveChangesAsync();
 
+                _balanceRepository.Update(balance);
+                await _balanceRepository.SaveAsync();
             }
             else
             {
@@ -164,23 +164,22 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBalance(int id)
         {
-            var balance = await _context.Balances.FindAsync(id);
+            var balance = await _balanceRepository.GetByIdAsync(id);
             if (balance == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Balances.Remove(balance);
-            await _context.SaveChangesAsync();
+            _balanceRepository.Delete2(balance);
+            await _balanceRepository.SaveAsync();
 
             return NoContent();
         }
 
 
-
         private bool BalanceExists(int id)
         {
-            return _context.Balances.Any(e => e.Id == id);
+            //return _context.Balances.Any(e => e.Id == id);
+            return _balanceRepository.GetByIdAsyncBool(id);
         }
 
         //private bool StudentExists(int? id)

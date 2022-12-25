@@ -61,7 +61,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DepartmentModel>> GetDepartment(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
+            var department = await _departmentRepository.GetByIdAsync(id);
 
             if (department == null)
             {
@@ -97,7 +97,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditDepartment(int id, DepartmentModel2 dep)
         {
-            var department = await _context.Departments.FindAsync(id);
+            var department = await _departmentRepository.GetByIdAsync(id);
             if (DepartmentExists(id))
             {
                 if (dep.SemesterId != 0)
@@ -155,9 +155,8 @@ namespace V2_Final500W.Controllers
                     department.CurrentAmount = department.CurrentAmount;
                 }
 
-              
-                _context.Departments.Update(department);
-                await _context.SaveChangesAsync();
+                _departmentRepository.Update(department);
+                await _departmentRepository.SaveAsync();
 
             }
             else
@@ -178,14 +177,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
+            var department = await _departmentRepository.GetByIdAsync(id);
             if (department == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Departments.Remove(department);
-            await _context.SaveChangesAsync();
+            _departmentRepository.Delete2(department);
+            await _departmentRepository.SaveAsync();
 
             return NoContent();
         }
@@ -194,7 +192,8 @@ namespace V2_Final500W.Controllers
 
         private bool DepartmentExists(int id)
         {
-            return _context.Departments.Any(e => e.Id == id);
+            //return _context.Departments.Any(e => e.Id == id);
+            return _departmentRepository.GetByIdAsyncBool(id);
         }
 
         //private bool StudentExists(int? id)

@@ -61,7 +61,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<RoomModel>> GetRoom(int id)
         {
-            var room = await _context.Rooms.FindAsync(id);
+            var room = await _roomRepository.GetByIdAsync(id);
 
             if (room == null)
             {
@@ -95,7 +95,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditRoom(int id, RoomModel2 roo)
         {
-            var room = await _context.Rooms.FindAsync(id);
+            var room = await _roomRepository.GetByIdAsync(id);
             if (RoomExists(id))
             {
                 
@@ -135,9 +135,8 @@ namespace V2_Final500W.Controllers
                 {
                     room.IsFree = room.IsFree;
                 }
-
-                _context.Rooms.Update(room);
-                await _context.SaveChangesAsync();
+                _roomRepository.Update(room);
+                await _roomRepository.SaveAsync();
 
             }
             else
@@ -158,14 +157,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoom(int id)
         {
-            var room = await _context.Rooms.FindAsync(id);
+            var room = await _roomRepository.GetByIdAsync(id);
             if (room == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Rooms.Remove(room);
-            await _context.SaveChangesAsync();
+            _roomRepository.Delete2(room);
+            await _roomRepository.SaveAsync();
 
             return NoContent();
         }
@@ -174,7 +172,8 @@ namespace V2_Final500W.Controllers
 
         private bool RoomExists(int id)
         {
-            return _context.Rooms.Any(e => e.Id == id);
+            //return _context.Rooms.Any(e => e.Id == id);
+            return _roomRepository.GetByIdAsyncBool(id);
         }
 
 

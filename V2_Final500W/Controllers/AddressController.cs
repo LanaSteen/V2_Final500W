@@ -19,14 +19,19 @@ namespace V2_Final500W.Controllers
         private readonly UniversityDbContext _context;
 
         private readonly IGenericRepository<Address> _addressRepository;
+        private readonly IGenericRepository<Student> _studentRepository;
+        private readonly IGenericRepository<Teacher> _teacherRepository;
         /// <summary>
         /// IGeneric interface implementation
         /// </summary>
-        public AddressController(IGenericRepository<Address> addressRepository,
+        public AddressController(IGenericRepository<Address> addressRepository, 
+            IGenericRepository<Student> studentRepository,
+            IGenericRepository<Teacher> teacherRepository,
             UniversityDbContext context)
         {
             _addressRepository = addressRepository;
-
+            _studentRepository = studentRepository;
+            _teacherRepository = teacherRepository;
             _context = context;
 
         }
@@ -62,7 +67,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AddressModel>> GetAddress(int id)
         {
-            var address = await _context.Addresses.FindAsync(id);
+            var address = await _addressRepository.GetByIdAsync(id);
 
             if (address == null)
             {
@@ -118,24 +123,28 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditAddress(int id, AddressModel addr)
         {
-            var address = await _context.Addresses.FindAsync(id);
+          //  var address = await _context.Addresses.FindAsync(id);
+
+            var address2 = await _addressRepository.GetByIdAsync(id);
+
+
             if (AddressExists(id))
             {
                 if(addr.TeacherId != 0)
                 {
-                    address.TeacherId = addr.TeacherId;
+                    address2.TeacherId = addr.TeacherId;
                 }
                 else
                 {
-                    address.TeacherId = address.TeacherId;
+                    address2.TeacherId = address2.TeacherId;
                 }
                 if (addr.StudentId != 0)
                 {
-                    address.StudentId = addr.StudentId;
+                    address2.StudentId = addr.StudentId;
                 }
                 else
                 {
-                    address.StudentId = address.StudentId;
+                    address2.StudentId = address2.StudentId;
                 }
                 if (addr.Address1 != "string")
                 {
@@ -144,23 +153,26 @@ namespace V2_Final500W.Controllers
                         return StatusCode(400, $"The Address1 field is required.");
                     }
 
-                    address.Address1 = addr.Address1;
+                    address2.Address1 = addr.Address1;
                 }
               
                 else
                 {
-                    address.Address1 = address.Address1;
+                    address2.Address1 = address2.Address1;
                 }
                 if (addr.Address2 != "string")
                 {
-                    address.Address2 = addr.Address2;
+                    address2.Address2 = addr.Address2;
                 }
               else
                 {
-                    address.Address2 = address.Address2;
+                    address2.Address2 = address2.Address2;
                 }
-                _context.Addresses.Update(address);
-                await _context.SaveChangesAsync();
+                //_context.Addresses.Update(address2);
+                _addressRepository.Update(address2);
+                //await _context.SaveChangesAsync();
+                await _addressRepository.SaveAsync();
+
 
             }
             else
@@ -181,36 +193,44 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAddress(int id)
         {
-            var address = await _context.Addresses.FindAsync(id);
+            var address = await _addressRepository.GetByIdAsync(id);
             if (address == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
 
-            _context.Addresses.Remove(address);
-            await _context.SaveChangesAsync();
+           _addressRepository.Delete2(address);  
+            await _addressRepository.SaveAsync();
 
             return NoContent();
         }
 
         private bool AddressExists(int id)
         {
-            return _context.Addresses.Any(e => e.Id == id);
+            // return _context.Addresses.Any(e => e.Id == id);
+            return _addressRepository.GetByIdAsyncBool(id);
         }
+
+
+
         private bool StudentExists(int? id)
         {
-            return _context.Students.Any(e => e.Id == id);
+            // return _context.Students.Any(e => e.Id == id);
+            return _studentRepository.GetByIdAsyncBool(id);
         }
         private bool TeacherExists(int? id)
         {
-            return _context.Teachers.Any(e => e.Id == id);
+            // return _context.Teachers.Any(e => e.Id == id);
+            return _teacherRepository.GetByIdAsyncBool(id);
         }
 
         private Responce GetResponce(int? id)
         {
            Responce resp = _context.Responces.First(e => e.StatusCode == id);
             return resp;
-        }
+        } //ამას არ ვიყენებ მაგრამ ვფიქრობდი რომ ასე ერორ ჰენდლერი უფრო სწორი იყო და
+          //ვიფიქრე გავაკეთებდი მაგრამ რადგანაც ყველა ჰენდლერის დაწერას მაინც ვერ მოვასწრებდი გავჩერდი,
+          //თუმცა ეს რომ მოვიფიქრე მაინც პლიუსია ხო? :D რადგან არ ვიყენებ რეპოზიტორზეც არ გადავაკეთებ
     }
 
 }

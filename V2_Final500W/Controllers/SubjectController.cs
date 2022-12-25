@@ -69,7 +69,7 @@ namespace V2_Final500W.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SubjectModel>> GetSubject(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject = await _subjectRepository.GetByIdAsync(id);
 
             if (subject == null)
             {
@@ -105,7 +105,7 @@ namespace V2_Final500W.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditSubject(int id, SubjectModel2 subj)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject = await _subjectRepository.GetByIdAsync(id);
             if (SubjectExists(id))
             { 
                 if (subj.Credit != 0)
@@ -161,8 +161,8 @@ namespace V2_Final500W.Controllers
                     subject.MaxNumberOfTeachers = subject.MaxNumberOfTeachers;
                 }
 
-                _context.Subjects.Update(subject);
-                await _context.SaveChangesAsync();
+                _subjectRepository.Update(subject);
+                await _subjectRepository.SaveAsync();
 
             }
             else
@@ -183,14 +183,13 @@ namespace V2_Final500W.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubject(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject = await _subjectRepository.GetByIdAsync(id);
             if (subject == null)
             {
                 return StatusCode(500, $"Wrong Id number");
             }
-
-            _context.Subjects.Remove(subject);
-            await _context.SaveChangesAsync();
+            _subjectRepository.Delete2(subject);
+            await _subjectRepository.SaveAsync();
 
             return NoContent();
         }
@@ -199,7 +198,8 @@ namespace V2_Final500W.Controllers
 
         private bool SubjectExists(int id)
         {
-            return _context.Subjects.Any(e => e.Id == id);
+            //return _context.Subjects.Any(e => e.Id == id);
+            return _subjectRepository.GetByIdAsyncBool(id);
         }
 
 
