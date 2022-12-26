@@ -72,12 +72,13 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular Room 
+        /// Controller for inserting the one particular Room or list of rooms
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddRoom(RoomModel2 room)
+        public async Task<IActionResult> AddRooms(List<RoomModel2> rooms)
         {
+            foreach(var room in rooms) { 
             await _roomRepository.AddAsync(new Room
             {
                 Description = room.Description,
@@ -86,6 +87,8 @@ namespace V2_Final500W.Controllers
 
             });
             await _roomRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -145,7 +148,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -165,7 +168,7 @@ namespace V2_Final500W.Controllers
             _roomRepository.Delete2(room);
             await _roomRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

@@ -75,12 +75,13 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular semester 
+        /// Controller for inserting the one particular semester or list of semesters
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddSemester(SemesterModel2 semester)
+        public async Task <IActionResult> AddSemesters(List<SemesterModel2> semesters)
         {
+            foreach(var semester in semesters) { 
             await _semesterRepository.AddAsync(new Semester
             {
                Year = semester.Year,
@@ -91,6 +92,8 @@ namespace V2_Final500W.Controllers
 
             });
             await _semesterRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -181,7 +184,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -201,7 +204,7 @@ namespace V2_Final500W.Controllers
             _semesterRepository.Delete2(semester);
             await _semesterRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

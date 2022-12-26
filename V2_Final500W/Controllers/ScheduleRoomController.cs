@@ -73,12 +73,13 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular ScheduleRoom 
+        /// Controller for inserting the one particular ScheduleRoom or list ScheduleRoom
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddScheduleRoom(ScheduleRoomModel scheduleRoom)
+        public async Task <IActionResult> AddScheduleRooms(List<ScheduleRoomModel> scheduleRooms)
         {
+            foreach(ScheduleRoomModel scheduleRoom in scheduleRooms) { 
             await _scheduleRoomRepository.AddAsync(new ScheduleRoom
             {
               
@@ -86,6 +87,8 @@ namespace V2_Final500W.Controllers
                 RoomId = scheduleRoom.RoomId
             });
             await _scheduleRoomRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -125,7 +128,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -145,7 +148,7 @@ namespace V2_Final500W.Controllers
             _scheduleRoomRepository.Delete2(scheduleRooms);
             await _scheduleRoomRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

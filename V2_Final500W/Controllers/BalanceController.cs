@@ -71,20 +71,25 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular address 
+        /// Controller for inserting the one particular balance or List of balances 
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
+        /// 
         [HttpPost]
-        public async Task AddBalance(BalanceModel balance)
+        public async Task<IActionResult> AddBalances(List<BalanceModel> balances)
         {
+            foreach(var i in balances) { 
             await _balanceRepository.AddAsync(new Balance
             {
-                Amount = balance.Amount,
-                Debth = balance.Debth,
-                StudentId = balance.StudentId,
-                SemesterId = balance.SemesterId
+                Amount = i.Amount,
+                Debth = i.Debth,
+                StudentId = i.StudentId,
+                SemesterId = i.SemesterId
             });
+           
             await _balanceRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -152,7 +157,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -172,7 +177,7 @@ namespace V2_Final500W.Controllers
             _balanceRepository.Delete2(balance);
             await _balanceRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

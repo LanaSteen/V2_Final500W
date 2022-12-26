@@ -11,6 +11,7 @@ namespace V2_Final500W.Repositories
         Task<T> GetByIdAsync(int id);
 
         Task<T> GetByIdAsync2(int? id);
+        //Task<T> GetByColAsync(string colName, int colValue);
         bool GetByIdAsyncBool(int? id);
         Task AddAsync(T obj);
         Task Update(T obj);

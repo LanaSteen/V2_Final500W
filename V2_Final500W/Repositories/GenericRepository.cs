@@ -39,6 +39,12 @@ namespace V2_Final500W.Repositories
           
         }
 
+        //public async Task<T> GetByColAsync(string colName, int colValue)
+        //{
+
+        //    return await _dbContext.Set<T>().First(p => p.colName == colValue);
+        //}
+
         public async Task AddAsync(T obj)
         {
             await _dbContext.Set<T>().AddAsync(obj);

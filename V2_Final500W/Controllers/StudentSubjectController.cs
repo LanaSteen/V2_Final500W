@@ -129,7 +129,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace V2_Final500W.Controllers
             _studentSubjectRepository.Delete2(studentSubject);
             await _studentSubjectRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         //private int? GetStudentById(int id)
@@ -173,13 +173,14 @@ namespace V2_Final500W.Controllers
             return y;
         }
         /// <summary>
-        /// Controller for inserting the one particular StudentSubject 
+        /// Controller for inserting the one particular StudentSubject or list of studentsSubjects
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
 
         [HttpPost]
-        public async Task<IActionResult>  AddStudentSubjectMax(StudentSubjectModel2 studentSubject)
+        public async Task<IActionResult>  AddStudentSubjectMax(List<StudentSubjectModel2> studentSubjects)
         {
+            foreach(var studentSubject in studentSubjects) { 
             await _studentSubjectRepository.AddAsync(new StudentSubject
             {
                 Point = studentSubject.Point,
@@ -192,10 +193,11 @@ namespace V2_Final500W.Controllers
             int? MaxNumberOfStudents = GetStudentMaxNumberOnSubject(studentSubject?.SubjectId);
             if (curentNumberOfStudents >= MaxNumberOfStudents)
             {
-                return StatusCode(500, $"Over maximmum number of students");
+                return StatusCode(500, $"Over maximmum number of students on this subject");
             }
             else { await _studentSubjectRepository.SaveAsync(); }
-            return NoContent();
+            }
+            return Ok($"Succseed");
         }
 
     

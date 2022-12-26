@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
+using System.Net;
 using V2_Final500W.Common;
 using V2_Final500W.Models;
 using V2_Final500W.Repositories;
@@ -79,40 +80,40 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular address 
+        /// Controller for inserting the one particular address or List of addresses
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
-    
 
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(AddressModel address)
+        public async Task<IActionResult> AddAddresses(List<AddressModel> addresses)
         {
-            await _addressRepository.AddAsync(new Address
+            foreach (var i in addresses)
             {
-                Address1 = address.Address1,
-                Address2 = address.Address2,
-                StudentId = address.StudentId,
-                TeacherId = address.TeacherId
-            });
+                await _addressRepository.AddAsync(new Address
+                {
+                    Address1 = i.Address1,
+                    Address2 = i.Address2,
+                    StudentId = i.StudentId,
+                    TeacherId = i.TeacherId
+                });
+                if (StudentExists(i.StudentId) == false && i.StudentId != null && i.StudentId != 0)
+                {
+                    return StatusCode(500, $"Student by {i.StudentId} Id number does not exists, if it is unknown yet write null or 0");
+                }
 
-            if (StudentExists(address.StudentId) == false && address.StudentId!=null && address.StudentId != 0)
-            {
-                return StatusCode(500, $"Student by {address.StudentId} Id number does not exists, if it is unknown yet write null or 0");
+                else if (TeacherExists(i.TeacherId) == false && i.TeacherId != null && i.TeacherId != 0)
+                {
+                    return StatusCode(500, $"Teacher by {i.TeacherId} Id number does not exists, if it is unknown yet write null or 0");
+                }
+                else
+                {
+                    await _addressRepository.SaveAsync();
+                }
             }
-
-            else if (TeacherExists(address.TeacherId) == false && address.TeacherId != null && address.TeacherId !=0)
-            {
-                return StatusCode(500, $"Teacher by {address.TeacherId} Id number does not exists, if it is unknown yet write null or 0");
-            }
-            else
-            {
-                await _addressRepository.SaveAsync();
-            }
-            return NoContent();
+            return Ok($"Succseed");
 
         }
-
 
 
 
@@ -196,7 +197,9 @@ namespace V2_Final500W.Controllers
             var address = await _addressRepository.GetByIdAsync(id);
             if (address == null)
             {
-                return StatusCode(500, $"Wrong Id number");
+                 return StatusCode(500, $"Wrong Id number");
+                //var x = GetResponce(-2).ToString();
+                //return StatusCode(505, $"{x})");
             }
 
            _addressRepository.Delete2(address);  
@@ -224,13 +227,31 @@ namespace V2_Final500W.Controllers
             return _teacherRepository.GetByIdAsyncBool(id);
         }
 
-        private Responce GetResponce(int? id)
+        private async Task<ActionResult<Responce>> GetResponce(int? id)
         {
            Responce resp = _context.Responces.First(e => e.StatusCode == id);
-            return resp;
+            return Ok (resp);
         } //ამას არ ვიყენებ მაგრამ ვფიქრობდი რომ ასე ერორ ჰენდლერი უფრო სწორი იყო და
           //ვიფიქრე გავაკეთებდი მაგრამ რადგანაც ყველა ჰენდლერის დაწერას მაინც ვერ მოვასწრებდი გავჩერდი,
           //თუმცა ეს რომ მოვიფიქრე მაინც პლიუსია ხო? :D რადგან არ ვიყენებ რეპოზიტორზეც არ გადავაკეთებ
+
+
+
+        //[HttpGet("{colName/id}")]
+        //public async Task<ActionResult<AddressModel>> GetAddressByStudentId(string colName, int id)
+        //{
+        //    var address = await _addressRepository.GetByColAsync(colName, id);
+      
+        //    if (address == null)
+        //    {
+        //        return StatusCode(500, $"Wrong Id number");
+
+        //    }
+
+        //    return Ok(address);
+        //}
+
+
     }
 
 }

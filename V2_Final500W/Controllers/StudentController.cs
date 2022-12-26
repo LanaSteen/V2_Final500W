@@ -77,12 +77,13 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular Student 
+        /// Controller for inserting the one particular Student of list of students
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddStudent(StudentModel2 student)
+        public async Task <IActionResult> AddStudents(List<StudentModel2> students)
         {
+            foreach(var student in students) { 
             await _studentRepository.AddAsync(new Student
             {
                 FirstName = student.FirstName,
@@ -96,6 +97,8 @@ namespace V2_Final500W.Controllers
 
             });
             await _studentRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
   
@@ -200,7 +203,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -220,7 +223,7 @@ namespace V2_Final500W.Controllers
             _studentRepository.Delete2(student);
             await _studentRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

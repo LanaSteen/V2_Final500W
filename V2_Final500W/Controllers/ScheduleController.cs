@@ -74,12 +74,13 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular Schedule 
+        /// Controller for inserting the one particular Schedule or list of schedules
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddScheedule(ScheduleModel2 schedule)
+        public async Task <IActionResult> AddScheedule(List<ScheduleModel2> schedules)
         {
+            foreach(ScheduleModel2 schedule in schedules) { 
             await _scheduleRepository.AddAsync(new Schedule
             {
                 Year= schedule.Year,
@@ -89,6 +90,8 @@ namespace V2_Final500W.Controllers
 
             });
             await _scheduleRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -132,7 +135,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -152,7 +155,7 @@ namespace V2_Final500W.Controllers
             _scheduleRepository.Delete2(schedule);
             await _scheduleRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

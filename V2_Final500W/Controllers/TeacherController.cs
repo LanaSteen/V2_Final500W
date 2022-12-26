@@ -84,13 +84,14 @@ namespace V2_Final500W.Controllers
 
 
         /// <summary>
-        /// Controller for inserting the one particular Teacher 
+        /// Controller for inserting the one particular Teacher or list of teachers
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
 
         [HttpPost]
-        public async Task<IActionResult> AddTeacherMaxSubj(TeacherModel2 teacher)
+        public async Task<IActionResult> AddTeacherMaxSubj(List<TeacherModel2> teachers)
         {
+            foreach(var teacher in teachers) { 
             await _teacherRepository.AddAsync(new Teacher
             {
 
@@ -113,7 +114,9 @@ namespace V2_Final500W.Controllers
                 return StatusCode(500, $"Over maximmum number of students");
             }
             else { await _teacherRepository.SaveAsync(); }
-            return NoContent();
+
+            }
+            return Ok($"Succseed");
 
 
         }
@@ -226,7 +229,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -246,7 +249,7 @@ namespace V2_Final500W.Controllers
             _teacherRepository.Delete2(teacher);
             await _teacherRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

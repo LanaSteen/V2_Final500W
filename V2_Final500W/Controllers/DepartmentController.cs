@@ -72,22 +72,26 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular Department 
+        /// Controller for inserting the one particular Department or list of departments
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddDepartment(DepartmentModel2 department)
+        public async Task<IActionResult> AddDepartments(List<DepartmentModel2> departments)
         {
+            foreach(var i in departments) { 
             await _departmentRepository.AddAsync(new Department
             {
-                Name = department.Name,
+                Name = i.Name,
                
-                MaxNumberOfStudents = department.MaxNumberOfStudents,
+                MaxNumberOfStudents = i.MaxNumberOfStudents,
 
-                CurrentAmount = department.CurrentAmount,
-                SemesterId = department.SemesterId
+                CurrentAmount = i.CurrentAmount,
+                SemesterId = i.SemesterId
             });
             await _departmentRepository.SaveAsync();
+
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -165,7 +169,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -185,7 +189,7 @@ namespace V2_Final500W.Controllers
             _departmentRepository.Delete2(department);
             await _departmentRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

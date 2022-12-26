@@ -80,12 +80,13 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular Subject 
+        /// Controller for inserting the one particular Subject or list of subjects
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddSubject(SubjectModel2 subject)
+        public async Task <IActionResult> AddSubject(List<SubjectModel2> subjects)
         {
+            foreach(var subject in subjects) { 
             await _subjectRepository.AddAsync(new Subject
             {
                 Credit = subject.Credit,
@@ -96,6 +97,8 @@ namespace V2_Final500W.Controllers
    
             });
             await _subjectRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -171,7 +174,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -191,7 +194,7 @@ namespace V2_Final500W.Controllers
             _subjectRepository.Delete2(subject);
             await _subjectRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 

@@ -66,19 +66,22 @@ namespace V2_Final500W.Controllers
         }
 
         /// <summary>
-        /// Controller for inserting the one particular ScheduleSubject 
+        /// Controller for inserting the one particular ScheduleSubject or list of ScheduleSubjects
         /// </summary>
         /// <returns>Status ok if it was inserted</returns>
         [HttpPost]
-        public async Task AddScheduleSubject(ScheduleSubjectModel scheduleSubject)
+        public async Task <IActionResult> AddScheduleSubjects(List<ScheduleSubjectModel> scheduleSubjects)
         {
+            foreach(ScheduleSubjectModel scheduleSubject in scheduleSubjects)
+            {
             await _scheduleSubjectRepository.AddAsync(new ScheduleSubject
             {
-
                 ScheduleId = scheduleSubject.ScheduleId,
                 SubjectId = scheduleSubject.SubjectId
             });
             await _scheduleSubjectRepository.SaveAsync();
+            }
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -118,7 +121,7 @@ namespace V2_Final500W.Controllers
 
             }
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
         /// <summary>
@@ -138,7 +141,7 @@ namespace V2_Final500W.Controllers
             _scheduleSubjectRepository.Delete2(scheduleSubjects);
             await _scheduleSubjectRepository.SaveAsync();
 
-            return NoContent();
+            return Ok($"Succseed");
         }
 
 
